@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:camera_and_map/fetcfh_google_map.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -15,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MapSample(),
     );
   }
 }
@@ -30,14 +33,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+  File? img;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,18 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+        child: img == null
+            ? const SizedBox()
+            : Image(image: FileImage(File(img!.path))),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -81,10 +68,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void openGallary() async {
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+    var fileImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      img = File(fileImage!.path);
+    });
   }
 
   void openCamera() async {
-    await ImagePicker().pickImage(source: ImageSource.camera);
+    var fileImage = await ImagePicker().pickImage(source: ImageSource.camera);
+    setState(() {
+      img = File(fileImage!.path);
+    });
   }
 }
